@@ -3,11 +3,12 @@ extern crate lazy_static;
 
 use std::env;
 use std::fs;
-use std::fs::File;
+// use std::fs::File;
 use scanner::Scanner;
 
 pub mod parser;
 pub mod scanner;
+pub mod ast;
 
 struct Args {
     input: String,
@@ -52,7 +53,8 @@ fn main() {
         std::process::exit(1);
     });
     // let f = File::open(&args.input);
-    let f_contents = fs::read_to_string(&args.input).unwrap_or_else(|_| {
+    // let f_contents = fs::read_to_string(&args.input).unwrap_or_else(|_| {
+    let f_contents = fs::read_to_string("test.c").unwrap_or_else(|_| {
         println!("Error opening file");
         std::process::exit(1);
     });

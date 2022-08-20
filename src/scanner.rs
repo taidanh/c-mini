@@ -2,25 +2,27 @@ extern crate lazy_static;
 
 use regex::Regex;
 
+pub type Token = (String, String);
+
 pub struct Scanner {
     pub lineno: i32,
     off: usize,
-    // tokens: Vec<(&'static str, Regex, &'static fn((String, String)) -> Box<(String, String)>)>,
-    // tokens: &'static [(&'static str, Regex, &'staticfn((String, String)) -> Box<(String, String)>); 16],
+    // tokens: Vec<(&'static str, Regex, &'static fn(Token) -> Box<Token>)>,
+    // tokens: &'static [(&'static str, Regex, &'staticfn(Token) -> Box<Token>); 16],
     istring: String,
 }
 
 impl Scanner {
     pub fn new(istring: String) -> Scanner {
         Scanner {
-            lineno: 0,
+            lineno: 1,
             off: 0,
             // tokens: Vec::from(&TOKENS),
             istring
         }
     }
 
-    pub fn token(&mut self) -> Option<(String, String)> {
+    pub fn token(&mut self) -> Option<Token> {
         loop {
             if self.off >= (self.istring.len() - 1) {
                 return None;
@@ -79,7 +81,7 @@ impl Scanner {
 }
 
 lazy_static! {
-    static ref TOKENS: [(&'static str, Regex, &'static fn((String, String)) -> Box<(String, String)>); 17] =
+    static ref TOKENS: [(&'static str, Regex, &'static fn(Token) -> Box<Token>); 17] =
     [  ("MUL",    Regex::new(r"^\*$").unwrap(),                             &IDY)
     ,  ("PLUS",   Regex::new(r"^\+$").unwrap(),                             &IDY)
     ,  ("MINUS",  Regex::new(r"^-$").unwrap(),                              &IDY)
@@ -109,14 +111,14 @@ static KEYWORDS: [(&str, &str); 6] = [
     ("VOID", "void"),
 ];
 
-fn idy(t: (String, String)) -> Box<(String, String)> {
+fn idy(t: Token) -> Box<Token> {
     Box::new(t)
 }
 
-const IDY: fn((String, String)) -> Box<(String, String)> = idy;
+const IDY: fn(Token) -> Box<Token> = idy;
 
 // TODO change token type to str, str
-fn find_keywords(t: (String, String)) -> Box<(String, String)> {
+fn find_keywords(t: Token) -> Box<Token> {
     // println!("finding: {:?}", t);
     Box::new(
         KEYWORDS
@@ -129,4 +131,4 @@ fn find_keywords(t: (String, String)) -> Box<(String, String)> {
     )
 }
 
-const FIND_KEYWORDS: fn((String, String)) -> Box<(String, String)> = find_keywords;
+const FIND_KEYWORDS: fn(Token) -> Box<Token> = find_keywords;
