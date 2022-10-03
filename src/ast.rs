@@ -15,7 +15,18 @@ impl fmt::Debug for Type {
     }
 }
 
-enum NodeType {
+impl Type {
+    pub fn is_int(&self) -> bool {
+        matches!(*self, Self::Int(_))
+    }
+
+    pub fn is_float(&self) -> bool {
+        matches!(*self, Self::Float(_))
+    }
+}
+
+#[derive(PartialEq)]
+pub enum NodeType {
     Num,
     VarID,
     IOID,
@@ -97,6 +108,15 @@ impl Node {
                 }
             }
             _ => format!("{:?} = {:?}{:?}{:?};", self.vr, self.node_type, self.val_type, args)
+        }
+    }
+
+    pub fn grow_ast(node_type: NodeType, val_type: Type, ast: Node) -> Self {
+        Self {
+            node_type,
+            val_type,
+            children: Vec::from([ast]),
+            vr: None,
         }
     }
 }
